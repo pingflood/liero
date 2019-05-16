@@ -1,0 +1,10 @@
+Package: liero
+Version: 
+Description: RetroGame port of Liero
+Section: emus
+Priority: optional
+Maintainer: pingflood
+Architecture: mipsel
+Homepage: https://github.com/retrofw/liero
+Depends:
+Source: https://github.com/retrofw/liero
