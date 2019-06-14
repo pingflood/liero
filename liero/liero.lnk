@@ -1,0 +1,4 @@
+title=Liero
+description=Liero port
+exec=/home/retrofw/games/liero/liero.elf
+clock=600
