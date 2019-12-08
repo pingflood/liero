@@ -1,3 +1,11 @@
+#
+# Liero for the RetroFW
+#
+# by pingflood; 2019
+#
+
+TARGET = liero/liero.dge
+
 CHAINPREFIX := /opt/mipsel-RetroFW-linux-uclibc
 CROSS_COMPILE := $(CHAINPREFIX)/usr/bin/mipsel-linux-
 
@@ -38,13 +46,12 @@ OBJDIR := .
 
 SRC := $(wildcard src/*.cpp)
 OBJ := $(SRC:%.cpp=$(OBJDIR)/%.o)
-EXE := $(BINDIR)/liero.elf
 
 .PHONY: all clean
 
-all : $(SRC) $(EXE)
+all : $(SRC) $(TARGET)
 
-$(EXE): $(OBJ) | $(BINDIR)
+$(TARGET): $(OBJ) | $(BINDIR)
 	$(CXX) $(LDFLAGS) $(OBJ) $(LIBS) -o $@
 
 $(OBJ): $(OBJDIR)/%.o: %.cpp | $(OBJDIR)
@@ -53,7 +60,7 @@ $(OBJ): $(OBJDIR)/%.o: %.cpp | $(OBJDIR)
 $(BINDIR) $(OBJDIR):
 	mkdir -p $@
 
-ipk: $(EXE)
+ipk: all
 	@rm -rf /tmp/.liero-ipk/ && mkdir -p /tmp/.liero-ipk/root/home/retrofw/games/liero /tmp/.liero-ipk/root/home/retrofw/apps/gmenu2x/sections/games
 	@cp -r liero/liero.elf liero/liero.png liero/data /tmp/.liero-ipk/root/home/retrofw/games/liero
 	@cp liero/liero.lnk /tmp/.liero-ipk/root/home/retrofw/apps/gmenu2x/sections/games
@@ -64,15 +71,15 @@ ipk: $(EXE)
 	@echo 2.0 > /tmp/.liero-ipk/debian-binary
 	@ar r liero/liero.ipk /tmp/.liero-ipk/control.tar.gz /tmp/.liero-ipk/data.tar.gz /tmp/.liero-ipk/debian-binary
 
-opk:
-	mkdir -p $(RELEASEDIR)
-	cp $(EXE) $(RELEASEDIR)
-	cp -R $(DATADIR) $(RELEASEDIR)
-	cp $(OPKDIR)/* $(RELEASEDIR)
-	cp COPYRIGHT $(RELEASEDIR)
-	cp README.md $(RELEASEDIR)
-	mksquashfs $(RELEASEDIR) $(BINDIR)/liero.opk -all-root -noappend -no-exports -no-xattrs
+opk: all
+	@mksquashfs \
+	liero/default.retrofw.desktop \
+	liero/liero.dge \
+	liero/liero.png \
+	liero/data \
+	liero/liero.opk \
+	-all-root -noappend -no-exports -no-xattrs
 
 clean:
-	rm -rf src/*.o $(EXE)
+	rm -rf src/*.o $(TARGET)
 	rm -rf $(RELEASEDIR)
